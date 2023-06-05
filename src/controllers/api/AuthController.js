@@ -1,6 +1,7 @@
-const User = require('../../models/user');
+const User = require('../../models/User');
 const { validationResult } = require('express-validator');
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcryptjs');
+const { generateAccessToken } = require('../../utils/token');
 
 class AuthController {
   async login(req, res) {
@@ -12,7 +13,11 @@ class AuthController {
         const areSame = await bcrypt.compare(password, candidate.password)
   
         if (areSame) {
-          res.json({"login": true})
+          const token = generateAccessToken(candidate.toObject());
+          res.json({
+            "success": true,
+            token
+          })
         } else {
           res.json({'loginError': 'Wrong email or password'}).status(422)
         }

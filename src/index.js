@@ -17,7 +17,14 @@ const app = express()
 
 app.use(morgan('combined'))
 app.use(bodyParser.json())
-app.use(cors())
+const corsConf = {
+  origin: "*",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}
+app.use(cors(corsConf));
+
 app.use(express.json())
 
 // custom middleware

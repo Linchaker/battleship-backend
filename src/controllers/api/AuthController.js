@@ -14,15 +14,12 @@ class AuthController {
   
         if (areSame) {
           const token = generateAccessToken(candidate.toObject());
-          res.json({
-            "success": true,
-            token
-          })
+          res.json({user: candidate.toObject(), token})
         } else {
-          res.json({'loginError': 'Wrong email or password'}).status(422)
+          res.status(422).json({'errors': [{path: 'email', msg: 'Wrong email or password'}]})
         }
       } else {
-        res.json({'loginError': 'User not exists'}).status(422)
+        res.status(422).json({'errors': [{path: 'email', msg: 'User not exists'}]})
       }
     } catch (e) {
       console.log(e)
@@ -36,14 +33,15 @@ class AuthController {
   
       const errors = validationResult(req)
       if (!errors.isEmpty()) {
-        return res.json({'registerError': errors.array()[0].msg}).status(422)
+        return res.status(422).json({'errors': errors.array()})
       }
       const hashPassword = await bcrypt.hash(password, 10)
       const user = new User({
         email, name, password: hashPassword
       })
       await user.save()
-      res.json({user: user}).status(200)
+      const token = generateAccessToken(user.toObject());
+      res.json({user: user.toObject(), token})
     } catch (e) {
       console.log(e)
       res.status(400).json({message: 'Registration error'})

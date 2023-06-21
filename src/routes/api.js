@@ -13,6 +13,7 @@ router.post('/auth/login', AuthController.login);
 router.post('/auth/register', registerValidators, AuthController.register);
 
 
-router.get('/play/create', authMiddleware, PlayController.createGame);
+// temp router.get('/play/create', authMiddleware, PlayController.createGame);
+router.get('/play/create', PlayController.createGame);
 
 module.exports = router;

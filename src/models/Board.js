@@ -19,7 +19,9 @@ class Board {
   
     recordHit(position) {
         const { x, y } = position;
-        this.hits.add(JSON.stringify({ x, y }));
+        if (x > 0 && y > 0 && x <= this.size && y <= this.size) {
+            this.hits.add(JSON.stringify({ x, y }));
+        }
     }
   
     placeShip(ship) {
@@ -27,7 +29,7 @@ class Board {
             const { position } = deck;
             const { x, y } = position;
 
-            if (x >= 0 && y >= 0 && x < this.size && y < this.size) {
+            if (x > 0 && y > 0 && x <= this.size && y <= this.size) {
                 this.occupied.add(JSON.stringify({ x, y }));
 
                 // Учет клеток вокруг корабля
@@ -36,7 +38,7 @@ class Board {
                     const adjacentX = x + dx;
                     const adjacentY = y + dy;
 
-                    if (adjacentX >= 0 && adjacentY >= 0 && adjacentX < this.size && adjacentY < this.size) {
+                    if (adjacentX > 0 && adjacentY > 0 && adjacentX <= this.size && adjacentY <= this.size) {
                         this.occupied.add(JSON.stringify({ x: adjacentX, y: adjacentY }));
                     }
                     }

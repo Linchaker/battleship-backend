@@ -1,5 +1,3 @@
-const { exists } = require("../Game");
-
 class Ship {
     // 1-4 decks
     size;

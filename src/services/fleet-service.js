@@ -3,17 +3,44 @@ const BoardService = require("./board-service")
 
 class FleetService {
     fleet = []
-    createFleet () {
-        this.createOneDeckShips()
+    #oneDeckShipLimit = 4
 
-        return {'fleet': this.fleet}
+    constructor(board) {
+        this.board = board
     }
 
-    createOneDeckShips() {
-        for (let i = 1; i <= 4; i++) {
-            this.fleet.push(new OneDeckShip(BoardService.getRandomPosition()))
+    createFleet () {
+        this.createOneDeckShips(this.#oneDeckShipLimit)
+
+        // create other
+        return this.fleet
+    }
+
+    createOneDeckShips(count) {
+        let ships = [] 
+        for (let i = 1; i <= count; i++) {
+            ships.push(new OneDeckShip(this.board.getRandomPosition()))
         }
+
+        if (!this.checkShipsPossitions(ships)) {
+            this.createOneDeckShips()
+        } else {
+            this.fleet.push(...ships)
+            ships.forEach(ship => {
+                this.board.placeShip(ship)
+            });
+        }
+
+    }
+
+    checkShipsPossitions(ships) {
+        return ships.every(ship => {
+            if (this.board.isFreePositionsForShipPlace(ship)) {
+                return true;
+            }
+            return false;
+        })
     }
 }
 
-module.exports = new FleetService
+module.exports = FleetService

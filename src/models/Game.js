@@ -28,10 +28,16 @@ const gameSchema = new Schema({
         enum: userStatuses,
         default: 'not_ready',
     },
-    ships: {
-        type: Object,
-        required: false
-    },
+    data: {
+        ownerData: {
+            type: Object,
+            required: true,
+        },
+        oponentData: {
+            type: Object,
+            required: false,
+          },
+      },
 })
 
 module.exports = model('Game', gameSchema)

@@ -1,14 +1,30 @@
+const FleetService = require('./fleet-service')
+
 class BoardService {
-    getRandomPosition() {
-      const getRandomInt = (min, max) => {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      };
-  
-      return {
-        x: getRandomInt(1, 10),
-        y: getRandomInt(1, 10),
-      };
+    fleet = []
+    constructor(board) {
+        this.board = board
+        this.fleetService = new FleetService(this.board)
     }
-  }
+
+    createFleet() {
+        this.fleet = this.fleetService.createFleet()
+    }
+
+   
+
+    getBoard() {
+        return {
+          ...this.board,
+          hits: [...this.board.hits],
+          occupied: [...this.board.occupied]
+        };
+      }
+
+    getFleet() {
+        return this.fleet
+    }
+
+}
   
-  module.exports = new BoardService
+module.exports = BoardService

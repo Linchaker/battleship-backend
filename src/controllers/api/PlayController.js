@@ -1,24 +1,37 @@
+const Board = require("../../models/Board")
 const Game = require("../../models/Game")
-const FleetService = require("../../services/fleet-service")
+const BoardService = require("../../services/board-service")
 
 class PlayController {
   async createGame(req, res) {
     try {
 
-      const Fleet = FleetService.createFleet()     
+      const ownerBoard = new BoardService(new Board(10))
+      ownerBoard.createFleet()
+    
      
-      // const game = new Game({
-      //  // ownerUserId: req.user._id,
-      //   ships: {
-      //     owner: Fleet
-      //   }
-      // })
+      const game = new Game({
+        ownerUserId: req.user._id,
+        data: {
+          ownerData: {
+            board: ownerBoard.getBoard(),
+            fleet: ownerBoard.getFleet()
+          }
+        }
+      })
+
+      await game.save()
 
       
 
+      // res.json({
+      //   "success": true,
+      //   "ownerBoard": ownerBoard.getBoard(),
+      //   "ownerFleet": ownerBoard.getFleet(),
+      // })
       res.json({
         "success": true,
-        "Fleet": Fleet
+        "game": game,
       })
     } catch (e) {
       console.log(e)

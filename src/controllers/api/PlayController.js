@@ -71,6 +71,11 @@ class PlayController {
 
         await game.save()
       }
+      
+      if (req.user._id !== game.ownerUserId && req.user._id !== game.oponentUserId) {
+        res.status(404).json({message: 'Game not found'})
+        return
+      }
 
        // создвать если нету для опонента доску и флот
        // в дальнейшем можено будет вырезать флот противника, доску оставляем чтобы показать куда уже стреляли

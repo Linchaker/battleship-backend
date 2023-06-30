@@ -72,7 +72,14 @@ class PlayController {
         await game.save()
       }
       
-      if (req.user._id !== game.ownerUserId && req.user._id !== game.oponentUserId) {
+  
+      if (req.user._id.equals(game.ownerUserId) || req.user._id.equals(game.oponentUserId)) {
+        res.json({
+          "success": true,
+          "game": game,
+        })
+        return
+      } else {
         res.status(404).json({message: 'Game not found'})
         return
       }
@@ -81,12 +88,7 @@ class PlayController {
        // в дальнейшем можено будет вырезать флот противника, доску оставляем чтобы показать куда уже стреляли
        // и добавить хитам статус попадания, либо одельный массив подбитых кораблей
 
-      console.log(game);
-
-      res.json({
-        "success": true,
-        "game": game,
-      })
+      
       
     } catch (e) {
       console.log(e)

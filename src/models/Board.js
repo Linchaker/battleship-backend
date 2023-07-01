@@ -73,6 +73,10 @@ class Board {
             return pos
         }
     }
+
+    getRandomOrientation() {
+        return Math.random() < 0.5 ? 'x' : 'y';
+    }
   }
 
 module.exports = Board

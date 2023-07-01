@@ -30,6 +30,9 @@ class PlayController {
       //   "ownerBoard": ownerBoard.getBoard(),
       //   "ownerFleet": ownerBoard.getFleet(),
       // })
+      // return
+
+
       res.json({
         "success": true,
         "game": game,

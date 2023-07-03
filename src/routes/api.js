@@ -15,6 +15,7 @@ router.post('/auth/register', registerValidators, AuthController.register);
 
 // router.get('/play', PlayController.createGame);
 router.post('/play', authMiddleware, PlayController.createGame);
+router.post('/play/shot', authMiddleware, PlayController.shot);
 router.get('/play/:gameId?', authMiddleware, PlayController.getGame);
 // temp without middleware router.get('/play/create', PlayController.createGame);
 

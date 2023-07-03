@@ -98,6 +98,74 @@ class PlayController {
       res.status(400).json({message: 'Get game error'})
     }
   }
+
+  async shot(req, res) {
+    try {
+      let {gameId, position} = req.body
+  
+      if (!gameId || !mongoose.Types.ObjectId.isValid(gameId)) {
+        res.status(404).json({message: 'Game not found'})
+        return
+      }
+
+
+      const game = await Game.findById(gameId);
+
+      if (!game) {
+        res.status(404).json({message: 'Game not found'})
+        return
+      }
+
+    
+      let userGame;
+      let oponentGame;
+      if (req.user._id.equals(game.ownerUserId)) {
+        userGame = game.data.ownerData
+        oponentGame = game.data.oponentData
+      } else if (req.user._id.equals(game.oponentUserId)) {
+        userGame = game.data.oponentData
+        oponentGame = game.data.ownerData
+      } else {
+        res.status(404).json({message: 'Game not found'})
+        return
+      }
+
+      const oponentBoard = new BoardService(new Board(oponentGame.board.size, new Set(oponentGame.board.hits),new Set(oponentGame.board.occupied)))
+      oponentBoard.setFleet(oponentGame.fleet)
+
+      if (!oponentBoard.board.isHit(position)) {
+        oponentBoard.board.recordHit(position)
+        oponentBoard.checkShipHit(position)
+
+        oponentGame = {
+          board: oponentBoard.getBoard(),
+          fleet: oponentBoard.getFleet()
+        }
+
+
+        if (req.user._id.equals(game.ownerUserId)) {
+          game.data.ownerData = userGame
+          game.data.oponentData = oponentGame
+        } else if (req.user._id.equals(game.oponentUserId)) {
+          game.data.oponentData = userGame
+          game.data.ownerData = oponentGame
+        }
+
+        await game.save()
+      }    
+      
+      res.json({
+        "success": true,
+        "game": game,
+      })
+      return
+      
+      
+    } catch (e) {
+      console.log(e)
+      res.status(400).json({message: 'Shot error'})
+    }
+  }
 }
 
 module.exports = new PlayController

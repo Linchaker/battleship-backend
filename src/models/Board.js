@@ -1,11 +1,9 @@
 class Board {
-    constructor(size) {
+    constructor(size, hits = new Set(), occupied = new Set()) {
         this.size = size;
-        // Множество координат попаданий
-        this.hits = new Set();
-        // Множество занятых координат кораблей
-        this.occupied = new Set();
-    }
+        this.hits = hits;
+        this.occupied = occupied;
+      }
   
     isOccupied(position) {
         const { x, y } = position;

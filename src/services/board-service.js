@@ -11,7 +11,9 @@ class BoardService {
         this.fleet = this.fleetService.createFleet()
     }
 
-   
+    setFleet(fleet) {
+        this.fleet = this.fleetService.setFleet(fleet)
+    }
 
     getBoard() {
         return {
@@ -24,6 +26,31 @@ class BoardService {
     getFleet() {
         return this.fleet
     }
+
+    checkShipHit(position) {
+        for (const ship of this.fleet) {
+          for (const deck of ship.state) {
+            if (deck.position.x === position.x && deck.position.y === position.y) {
+              deck.status = false;
+              if (this.isShipDestroy(ship)) {
+                ship.status = false;
+              }
+              return true; // Попали в корабль
+            }
+          }
+        }
+
+        return false; // Не попали в корабль
+    }
+
+    isShipDestroy(ship) {
+      return ship.state.every(deck => {
+        const { status } = deck;
+        return !status;
+      });
+    }
+
+    
 
 }
   

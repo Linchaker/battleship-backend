@@ -13,13 +13,17 @@ class FleetService {
         this.board = board
     }
 
+    setFleet(fleet) {
+        this.fleet = fleet
+        return this.fleet
+    }
+
     createFleet () {
         this.createOneDeckShips(this.#oneDeckShipLimit)
         this.createFewDeckShips(2, this.#twoDeckShipLimit)
         this.createFewDeckShips(3, this.#threeDeckShipLimit)
         this.createFewDeckShips(4, this.#fourDeckShipLimit)
 
-        // create other
         return this.fleet
     }
 
@@ -33,15 +37,6 @@ class FleetService {
                 i--
             }
         }
-
-        // if (!this.checkShipsPossitions(ships)) {
-        //     this.createOneDeckShips()
-        // } else {
-        //     this.fleet.push(...ships)
-        //     ships.forEach(ship => {
-        //         this.board.placeShip(ship)
-        //     });
-        // }
 
     }
 

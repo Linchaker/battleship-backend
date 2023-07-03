@@ -18,8 +18,8 @@ class BoardService {
     getBoard() {
         return {
           ...this.board,
-          hits: [...this.board.hits],
-          occupied: [...this.board.occupied]
+          hits: Array.from(this.board.hits).map(item => JSON.parse(item)),
+          occupied: Array.from(this.board.occupied).map(item => JSON.parse(item))
         };
       }
 

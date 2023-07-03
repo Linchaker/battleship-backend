@@ -130,7 +130,12 @@ class PlayController {
         return
       }
 
-      const oponentBoard = new BoardService(new Board(oponentGame.board.size, new Set(oponentGame.board.hits),new Set(oponentGame.board.occupied)))
+      const oponentBoard = new BoardService(
+        new Board(oponentGame.board.size, 
+          new Set(oponentGame.board.hits.map(item => JSON.stringify(item))),
+          new Set(oponentGame.board.occupied.map(item => JSON.stringify(item)))
+        )
+      )
       oponentBoard.setFleet(oponentGame.fleet)
 
       if (!oponentBoard.board.isHit(position)) {

@@ -7,9 +7,8 @@ const cors = require('cors')
 const morgan = require('morgan')
 const { Server } = require("socket.io");
 const { authenticateSocket } = require("./middleware/authenticateSocket")
-
-
-const apiRoutes = require('./routes/api')
+const apiRoutes = require('./routes/api');
+const { shotHandler } = require('./services/shot-service');
 // const authRoutes = require('./routes/auth')
 
 // const varMiddleware = require('./middleware/variables')
@@ -57,7 +56,7 @@ async function start() {
 
   
   io.on('connection', (socket) => {
-    console.log('Новое соединение с клиентом WebSocket');
+    console.log('Connected to WebSocket');
     authenticateSocket(socket, (error) => {
       if (error) {
         console.log('Socket auth error:', error.message);
@@ -65,14 +64,14 @@ async function start() {
       } else {
         console.log('Socket auth successfully');
         
-        // Обработка события получения хода игрока 
-        socket.on('playerMove', (position) => {
-          console.log(socket.user)
-          console.log('Ход игрока:', position);
-          // Обновите состояние игры на сервере
-          // Отправьте обновленное состояние игры всем подключенным клиентам
-          // Например:
-          // io.emit('gameUpdate', updatedGameData);
+        socket.on('playerShot', async ({ gameId, position }, callback) => {
+          try {
+            const updatedGameData = await shotHandler(socket.user, gameId, position)
+            callback({ success: true, message: "Shot success" });
+            io.emit('gameUpdate', updatedGameData.game);
+          } catch (error) {
+            callback({ success: false, message: "Shot error", error });
+          }
         });
       
         // Обработка других событий и сообщений от клиента WebSocket

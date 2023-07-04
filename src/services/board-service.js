@@ -33,6 +33,7 @@ class BoardService {
             if (deck.position.x === position.x && deck.position.y === position.y) {
               deck.status = false;
               if (this.isShipDestroy(ship)) {
+                this.board.recordHistAroundDestroyedShip(ship)
                 ship.status = false;
               }
               return true; // Попали в корабль

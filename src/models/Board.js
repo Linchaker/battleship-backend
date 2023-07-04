@@ -33,6 +33,26 @@ class Board {
             this.hits.add(JSON.stringify({ x, y }));
         }
     }
+
+    recordHistAroundDestroyedShip(ship) {
+        ship.state.forEach(deck => {
+            const { position } = deck;
+            const { x, y } = position;
+
+            if (x > 0 && y > 0 && x <= this.size && y <= this.size) {
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                    const adjacentX = x + dx;
+                    const adjacentY = y + dy;
+
+                    if (adjacentX > 0 && adjacentY > 0 && adjacentX <= this.size && adjacentY <= this.size) {
+                        this.hits.add(JSON.stringify({ x: adjacentX, y: adjacentY }));
+                    }
+                    }
+                }
+            }
+        });
+    }
   
     placeShip(ship) {
         ship.state.forEach(deck => {

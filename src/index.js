@@ -57,18 +57,24 @@ async function start() {
   
   io.on('connection', (socket) => {
     console.log('Connected to WebSocket');
+
+    socket.on('joinGame', (data) => {
+      socket.join(data.gameId); 
+    });
+
+
     authenticateSocket(socket, (error) => {
       if (error) {
         console.log('Socket auth error:', error.message);
         socket.disconnect();
       } else {
-        console.log('Socket auth successfully');
+        console.log('Socket auth successfully');       
         
         socket.on('playerShot', async ({ gameId, position }, callback) => {
           try {
             const updatedGameData = await shotHandler(socket.user, gameId, position)
             callback({ success: true, message: "Shot success" });
-            io.emit('gameUpdate', updatedGameData.game);
+            io.to(gameId).emit('gameUpdate', updatedGameData.game);
           } catch (error) {
             callback({ success: false, message: "Shot error", error });
           }

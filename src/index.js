@@ -9,6 +9,7 @@ const { Server } = require("socket.io");
 const { authenticateSocket } = require("./middleware/authenticateSocket")
 const apiRoutes = require('./routes/api');
 const { shotHandler } = require('./services/shot-service');
+const { setReadyHandler } = require('./services/game-status-service');
 // const authRoutes = require('./routes/auth')
 
 // const varMiddleware = require('./middleware/variables')
@@ -77,6 +78,15 @@ async function start() {
             io.to(gameId).emit('gameUpdate', updatedGameData.game);
           } catch (error) {
             callback({ success: false, message: "Shot error", error });
+          }
+        });
+
+        socket.on('setReady', async ({ gameId }) => {
+          try {
+            const updatedGameData = await setReadyHandler(socket.user, gameId)
+            io.to(gameId).emit('gameUpdate', updatedGameData.game);
+          } catch (error) {
+            console.log(`setReady error`, error);
           }
         });
 

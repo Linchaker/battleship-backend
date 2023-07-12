@@ -15,18 +15,14 @@ async function shotHandler(user, gameId, position) {
       throw new Error('Game not found')
     }
 
-  
-    let userGame;
-    let oponentGame;
-    if (user._id.equals(game.ownerUserId)) {
-      userGame = game.data.ownerData
-      oponentGame = game.data.oponentData
-    } else if (user._id.equals(game.oponentUserId)) {
-      userGame = game.data.oponentData
-      oponentGame = game.data.ownerData
-    } else {
+    if (!user._id.equals(game.ownerUserId) && !user._id.equals(game.oponentUserId)) {
       throw new Error('Game not found')
     }
+
+    const isOwner = user._id.equals(game.ownerUserId);
+    let userGame = isOwner ? game.data.ownerData : game.data.oponentData
+    let oponentGame = isOwner ? game.data.oponentData : game.data.ownerData
+
 
     const oponentBoard = new BoardService(
       new Board(oponentGame.board.size, 
@@ -38,21 +34,20 @@ async function shotHandler(user, gameId, position) {
 
     if (!oponentBoard.board.isHit(position)) {
       oponentBoard.board.recordHit(position)
-      oponentBoard.checkShipHit(position)
+      const isHitShip = oponentBoard.checkShipHit(position)
 
       oponentGame = {
         board: oponentBoard.getBoard(),
         fleet: oponentBoard.getFleet()
       }
 
+      game.data.ownerData = isOwner ? userGame : oponentGame;
+      game.data.oponentData = isOwner ? oponentGame : userGame;
 
-      if (user._id.equals(game.ownerUserId)) {
-        game.data.ownerData = userGame
-        game.data.oponentData = oponentGame
-      } else if (user._id.equals(game.oponentUserId)) {
-        game.data.oponentData = userGame
-        game.data.ownerData = oponentGame
+      if (!isHitShip) {
+        game.nextMoveUserId = isOwner ? game.oponentUserId : game.ownerUserId;
       }
+
 
       await game.save()
     }    

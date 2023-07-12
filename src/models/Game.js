@@ -28,6 +28,11 @@ const gameSchema = new Schema({
         enum: userStatuses,
         default: 'not_ready',
     },
+    nextMoveUserId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     data: {
         ownerData: {
             type: Object,

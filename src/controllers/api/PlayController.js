@@ -13,6 +13,7 @@ class PlayController {
      
       const game = new Game({
         ownerUserId: req.user._id,
+        nextMoveUserId: req.user._id,
         data: {
           ownerData: {
             board: ownerBoard.getBoard(),

@@ -46,6 +46,12 @@ async function shotHandler(user, gameId, position) {
 
       if (!isHitShip) {
         game.nextMoveUserId = isOwner ? game.oponentUserId : game.ownerUserId;
+      } else {
+        if (oponentBoard.isFleetDestroyed()) {
+          game.status = 'ended'
+          game.oponentStatus = isOwner ? 'loser' : 'winner'
+          game.ownerStatus = isOwner ? 'winner' : 'loser'
+        }
       }
 
 

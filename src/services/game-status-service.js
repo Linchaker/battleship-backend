@@ -36,4 +36,32 @@ async function setReadyHandler(user, gameId) {
   }
 }
 
-module.exports = {setReadyHandler}
+async function setEndGameHandler(user, gameId) {
+  try {
+    if (!gameId || !mongoose.Types.ObjectId.isValid(gameId)) {
+      throw new Error('Game not found')
+    }
+
+    const game = await Game.findById(gameId);
+
+    if (!game) {
+      throw new Error('Game not found')
+    }
+
+    const isOwner = user._id.equals(game.ownerUserId);
+
+    game.status = 'ended'
+    game.ownerStatus = isOwner ? 'loser' : 'winner'
+    game.oponentStatus = isOwner ? 'winner' : 'loser'
+    
+    await game.save()
+    
+    return {game}    
+    
+  } catch (e) {
+    console.log(e)
+    throw new Error('setEndGameHandler error')
+  }
+}
+
+module.exports = {setReadyHandler, setEndGameHandler}

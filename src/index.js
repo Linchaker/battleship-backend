@@ -9,7 +9,8 @@ const { Server } = require("socket.io");
 const { authenticateSocket } = require("./middleware/authenticateSocket")
 const apiRoutes = require('./routes/api');
 const { shotHandler } = require('./services/shot-service');
-const { setReadyHandler } = require('./services/game-status-service');
+const { setReadyHandler, setEndGameHandler } = require('./services/game-status-service');
+const { log } = require('console');
 // const authRoutes = require('./routes/auth')
 
 // const varMiddleware = require('./middleware/variables')
@@ -60,6 +61,7 @@ async function start() {
     console.log('Connected to WebSocket');
 
     socket.on('joinGame', (data) => {
+      console.log('joinGame', data.gameId); 
       socket.join(data.gameId); 
     });
 
@@ -83,10 +85,21 @@ async function start() {
 
         socket.on('setReady', async ({ gameId }) => {
           try {
+            console.log(gameId, socket.user);
             const updatedGameData = await setReadyHandler(socket.user, gameId)
             io.to(gameId).emit('gameUpdate', updatedGameData.game);
           } catch (error) {
             console.log(`setReady error`, error);
+          }
+        });
+
+        socket.on('setEndGame', async ({ gameId }, callback) => {
+          try {
+            const updatedGameData = await setEndGameHandler(socket.user, gameId)
+            callback({ success: true, message: "Game ended" });
+            io.to(gameId).emit('gameUpdate', updatedGameData.game);
+          } catch (error) {
+            callback({ success: false, message: "Game ended", error });
           }
         });
 

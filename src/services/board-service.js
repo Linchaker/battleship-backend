@@ -51,7 +51,11 @@ class BoardService {
       });
     }
 
-    
+    isFleetDestroyed() {
+      return this.fleet.every((ship) => {
+          return ship.status === false
+      })
+    }
 
 }
   

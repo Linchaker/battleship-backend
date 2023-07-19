@@ -12,6 +12,10 @@ const userSchema = new Schema({
     name: {
         type: String,
         required: false
+    },
+    provider: {
+        type: String,
+        default: 'local'
     }
 })
 

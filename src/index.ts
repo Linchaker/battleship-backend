@@ -65,7 +65,6 @@ async function start() {
       socket.join(data.gameId); 
     });
 
-
     authenticateSocket(socket, (error) => {
       if (error) {
         console.log('Socket auth error:', error.message);
